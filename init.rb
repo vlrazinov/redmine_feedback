@@ -28,7 +28,7 @@ end
 
 Redmine::Plugin.register :redmine_feedback do
   name 'Redmine Feedback plugin'
-  author 'Your Name'
+  author 'Разинов Владислав'
   description 'Adds universal feedback/voting mechanism for any issue type.'
   version '1.0.0'
   

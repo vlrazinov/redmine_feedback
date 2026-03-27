@@ -8,7 +8,7 @@ module RedmineFeedback
       issue = context[:issue]
       return '' unless issue
       
-      feedback_field_id = Setting.plugin_redmine_feedback['feedback_custom_field_id']
+      feedback_field_id = get_feedback_custom_field_id
       return '' unless feedback_field_id
       
       custom_value = issue.custom_value_for(feedback_field_id)
@@ -16,9 +16,9 @@ module RedmineFeedback
       return '' unless rating.present?
       
       rating_text = case rating
-                    when 'good' then 'Хорошо'
-                    when 'okay' then 'Нормально'
-                    when 'bad' then 'Плохо'
+                    when 'good', 'Хорошо' then 'Хорошо'
+                    when 'okay', 'Нормально' then 'Нормально'
+                    when 'bad', 'Плохо' then 'Плохо'
                     else rating
                     end
       
@@ -29,13 +29,29 @@ module RedmineFeedback
       html = <<-HTML
         <div class="feedback-info" style="margin-top: 10px;">
           <strong>⭐ Оценка поддержки:</strong>
-          <span class="feedback-rating feedback-#{rating}" style="cursor: help;" title="#{tooltip}">
+          <span class="feedback-rating feedback-#{rating.to_s.parameterize}" style="cursor: help;" title="#{tooltip}">
             #{rating_text}
           </span>
         </div>
       HTML
       
       html.html_safe
+    end
+    
+    private
+    
+    # Получает ID поля из настроек или ищет по имени
+    def get_feedback_custom_field_id
+      field_id = Setting.plugin_redmine_feedback['feedback_custom_field_id']
+      
+      # Если ID есть в настройках и поле существует - используем его
+      if field_id.present? && IssueCustomField.exists?(id: field_id)
+        return field_id
+      end
+      
+      # Иначе ищем поле по имени
+      field = IssueCustomField.find_by(name: 'Оценка поддержки')
+      field&.id
     end
   end
 end

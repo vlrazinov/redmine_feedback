@@ -1,2 +1,53 @@
-node_modules/
+```
+# Dependencies
+vendor/bundle/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment
 .env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*~
+*.bak
+*.backup
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# Test reports
+test/reports/
+*.xml
+
+# Local configuration
+config/database.yml
+config/secrets.yml
+config/credentials.yml.enc
+
+# Processed assets
+public/assets/
+public/packs/
+
+# Lock files
+Gemfile.lock
+package-lock.json
+yarn.lock
+
+# IDE specific
+*.swp
+*.swo
+```

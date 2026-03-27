@@ -18,7 +18,7 @@ class FeedbackController < ApplicationController
       return
     end
     
-    custom_field_id = Setting.plugin_redmine_feedback['feedback_custom_field_id']
+    custom_field_id = get_feedback_custom_field_id
     if custom_field_id.present?
       @existing_feedback = @issue.custom_value_for(custom_field_id)&.value
     end
@@ -41,15 +41,15 @@ class FeedbackController < ApplicationController
     
     # Сохраняем русское название напрямую
     rating_value = case rating
-                  when 'good' then 'Хорошо'
-                  when 'okay' then 'Нормально'
-                  when 'bad' then 'Плохо'
+                  when 'good', 'Хорошо' then 'Хорошо'
+                  when 'okay', 'Нормально' then 'Нормально'
+                  when 'bad', 'Плохо' then 'Плохо'
                   else rating
                   end
     
-    custom_field_id = Setting.plugin_redmine_feedback['feedback_custom_field_id']
+    custom_field_id = get_feedback_custom_field_id
     if custom_field_id.present? && rating.present?
-      custom_value = @issue.custom_values.detect { |v| v.custom_field_id == custom_field_id.to_i }
+      custom_value = @issue.custom_values.detect { |v| v.custom_field_id == custom_field_id }
       if custom_value.nil?
         custom_value = CustomValue.new(
           customized: @issue,
@@ -78,5 +78,21 @@ class FeedbackController < ApplicationController
     
     flash[:notice] = 'Спасибо! Ваша оценка сохранена.'
     redirect_to feedback_vote_path(@issue.id, token: token)
+  end
+  
+  private
+  
+  # Получает ID поля из настроек или ищет по имени
+  def get_feedback_custom_field_id
+    field_id = Setting.plugin_redmine_feedback['feedback_custom_field_id']
+    
+    # Если ID есть в настройках и поле существует - используем его
+    if field_id.present? && IssueCustomField.exists?(id: field_id)
+      return field_id
+    end
+    
+    # Иначе ищем поле по имени
+    field = IssueCustomField.find_by(name: 'Оценка поддержки')
+    field&.id
   end
 end

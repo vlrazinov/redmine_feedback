@@ -1,24 +1,33 @@
 class AddFeedbackCustomField < ActiveRecord::Migration[6.0]
   def up
-    field = IssueCustomField.create!(
-      name: 'Оценка поддержки', # Название на русском
-      field_format: 'string',
-      is_for_all: true,
-      is_filter: true, # Делаем поле доступным для фильтрации
-      editable: true,
-      visible: true,
-      trackers: Tracker.all # Применяем ко всем трекерам (по умолчанию)
-    )
-
-    # Сохраняем ID этого поля в настройках плагина для удобства
+    # Ищем существующее поле с таким именем
+    field = IssueCustomField.find_by(name: 'Оценка поддержки')
+    
+    if field.nil?
+      # Создаём новое поле, если не найдено
+      field = IssueCustomField.create!(
+        name: 'Оценка поддержки',
+        field_format: 'string',
+        is_for_all: true,
+        is_filter: true,
+        editable: true,
+        visible: true,
+        trackers: Tracker.all
+      )
+    end
+    
+    # Сохраняем ID поля в настройках для совместимости
     Setting.plugin_redmine_feedback = {} unless Setting.plugin_redmine_feedback
     Setting.plugin_redmine_feedback['feedback_custom_field_id'] = field.id
   end
 
   def down
-    # Удаляем поле и настройки плагина
-    field_id = Setting.plugin_redmine_feedback['feedback_custom_field_id']
-    IssueCustomField.find_by(id: field_id)&.destroy
-    Setting.plugin_redmine_feedback = Setting.plugin_redmine_feedback.merge('feedback_custom_field_id' => nil)
+    # Удаляем только поле, созданное плагином (по имени)
+    field = IssueCustomField.find_by(name: 'Оценка поддержки')
+    field&.destroy
+    # Не удаляем настройки полностью, только сбрасываем ID
+    if Setting.plugin_redmine_feedback.is_a?(Hash)
+      Setting.plugin_redmine_feedback = Setting.plugin_redmine_feedback.merge('feedback_custom_field_id' => nil)
+    end
   end
 end
