@@ -1,0 +1,51 @@
+<h2><%= l(:label_feedback_settings) %></h2>
+
+<%= form_tag({ controller: 'settings', action: 'plugin', id: 'redmine_feedback' }, method: :post) do %>
+  <div class="box tabular">
+    <p>
+      <label><%= l(:label_feedback_link_text) %></label>
+      <%= text_field_tag 'settings[feedback_link_text]', @settings['feedback_link_text'], size: 50 %>
+      <em><%= l(:text_feedback_link_text_info) %></em>
+    </p>
+    
+    <p>
+      <label><%= l(:label_feedback_custom_field) %></label>
+      <% field_id = @settings['feedback_custom_field_id'] %>
+      <% if field_id.present? %>
+        <% field = IssueCustomField.find_by(id: field_id) %>
+        <% if field %>
+          <span style="color: green;">
+            <%= l(:text_using_field) %>: <%= field.name %> (ID: <%= field.id %>)
+          </span>
+          <%= hidden_field_tag 'settings[feedback_custom_field_id]', field_id %>
+        <% else %>
+          <span style="color: orange;">
+            <%= l(:text_field_not_found) %> (ID: <%= field_id %>)
+          </span>
+          <% field_options = IssueCustomField.where(field_format: 'string').map { |f| [f.name, f.id] } %>
+          <%= select_tag 'settings[feedback_custom_field_id]', options_for_select(field_options, field_id), include_blank: true %>
+        <% end %>
+      <% else %>
+        <span style="color: orange;">
+          <%= l(:text_no_feedback_field) %>
+        </span>
+        <% field_options = IssueCustomField.where(field_format: 'string').map { |f| [f.name, f.id] } %>
+        <%= select_tag 'settings[feedback_custom_field_id]', options_for_select(field_options), include_blank: true %>
+      <% end %>
+    </p>
+  </div>
+  
+  <fieldset class="box">
+    <legend><%= l(:label_available_macros) %></legend>
+    <p>
+      <strong>{{feedback_link}}</strong><br />
+      <%= l(:text_feedback_macro_usage) %>
+    </p>
+  </fieldset>
+  
+  <%= submit_tag l(:button_save) %>
+<% end %>
+
+<% field_options = IssueCustomField.where(field_format: 'string').map { |f| [f.name, f.id] } %>
+<% text_using_field = l(:text_using_field) %>
+<% text_field_not_found = l(:text_field_not_found) %>
