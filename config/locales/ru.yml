@@ -22,3 +22,4 @@ ru:
   text_field_not_found: "Поле не найдено"
   button_save: "Сохранить"
   text_resubmit_warning: "Вы можете отправить новую оценку – она заменит предыдущую."
+  notice_feedback_new: "Пожалуйста, оцените качество поддержки."

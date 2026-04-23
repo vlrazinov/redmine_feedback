@@ -5,6 +5,10 @@
     <%= l(:notice_already_voted, rating: rating_text_for(@existing_feedback)) %>
     <p><%= l(:text_resubmit_warning) %></p>
   </div>
+<% else %>
+  <div class="flash notice">
+    <%= l(:notice_feedback_new) %>
+  </div>
 <% end %>
 
 <%= form_tag feedback_submit_path(@issue.id, token: params[:token]), method: :post, class: 'feedback-form' do %>
