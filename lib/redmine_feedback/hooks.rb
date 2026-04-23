@@ -8,10 +8,12 @@ module RedmineFeedback
     # Мы перехватываем его, чтобы добавить tooltip к нашему полю оценки
     def view_custom_fields_values_issue(context={})
       issue = context[:issue]
-      return '' unless issue
+      custom_field = context[:custom_field]
+      return '' unless issue && custom_field
       
       feedback_field_id = Setting.plugin_redmine_feedback['feedback_custom_field_id']
       return '' unless feedback_field_id
+      return '' unless custom_field.id.to_s == feedback_field_id.to_s
       
       # Находим значение нашего поля
       custom_value = issue.custom_values.detect { |v| v.custom_field_id.to_s == feedback_field_id.to_s }
@@ -36,16 +38,14 @@ module RedmineFeedback
         # Очищаем комментарий от переносов строк и экранируем спецсимволы для HTML атрибута
         tooltip_text = comment.to_s.gsub("\n", ' ').gsub("\r", ' ').gsub('"', '&quot;').gsub("'", '&#39;')
         tooltip = "#{I18n.t(:label_comment)}: #{tooltip_text}"
-        title_attr = "title=\"#{tooltip}\""
-        style_attr = "style=\"cursor: help; text-decoration: underline dotted; border-bottom: 1px dotted #999;\""
         
-        # Возвращаем HTML с подсказкой
-        html = "<span class=\"feedback-rating feedback-#{rating}\" #{style_attr} #{title_attr}>#{rating_text}</span>"
+        # Возвращаем HTML с подсказкой - оборачиваем в span с title
+        html = "<span title=\"#{tooltip}\" style=\"cursor: help; text-decoration: underline dotted;\">#{rating_text}</span>"
         return html.html_safe
       end
       
-      # Если комментария нет, возвращаем nil, чтобы Redmine отобразил значение как обычно
-      nil
+      # Если комментария нет, всё равно возвращаем значение, но без tooltip
+      rating_text.html_safe
     end
     
     def view_issues_show_details_bottom(context = {})
@@ -76,7 +76,7 @@ module RedmineFeedback
         tooltip_text = comment.to_s.gsub("\n", ' ').gsub("\r", ' ').gsub('"', '&quot;').gsub("'", '&#39;')
         tooltip = "#{I18n.t(:label_comment)}: #{tooltip_text}"
         title_attr = "title=\"#{tooltip}\""
-        style_attr = "style=\"cursor: help; text-decoration: underline dotted; border-bottom: 1px dotted #999;\""
+        style_attr = "style=\"cursor: help; text-decoration: underline dotted;\""
       else
         title_attr = ""
         style_attr = ""
