@@ -32,13 +32,20 @@ module RedmineFeedback
       end
       
       comment = feedback&.comment
-      # Экранируем комментарий для использования в атрибуте title
-      tooltip = comment.present? ? "Комментарий: #{comment.to_s.gsub('"', '&quot;').gsub("\n", ' ')}" : ''
+      # Формируем tooltip с комментарием
+      if comment.present?
+        # Очищаем комментарий от переносов строк и экранируем спецсимволы для HTML атрибута
+        tooltip_text = comment.to_s.gsub("\n", ' ').gsub("\r", ' ').gsub('"', '&quot;').gsub("'", '&#39;')
+        tooltip = "Комментарий: #{tooltip_text}"
+        title_attr = "title=\"#{tooltip}\""
+      else
+        title_attr = ""
+      end
       
       html = <<-HTML
         <div class="feedback-info" style="margin-top: 10px;">
           <strong>⭐ Оценка поддержки:</strong>
-          <span class="feedback-rating feedback-#{rating}" style="cursor: help;" title="#{tooltip}">
+          <span class="feedback-rating feedback-#{rating}" style="cursor: help; text-decoration: underline dotted;" #{title_attr}>
             #{rating_text}
           </span>
         </div>

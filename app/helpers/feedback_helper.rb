@@ -22,13 +22,15 @@ module FeedbackHelper
 
     # Получаем комментарий из таблицы feedbacks
     feedback = Feedback.find_by(issue_id: issue.id)
-    comment = feedback&.comment
+    comment = feedback&.vote_comment
 
     text = rating_text_for(rating_value)
     
     if comment.present?
+      # Экранируем специальные символы для атрибута title
+      escaped_comment = comment.to_s.gsub('"', '&quot;').gsub("\n", ' ').gsub("\r", '')
       content_tag(:span, text, 
-                  title: comment, 
+                  title: escaped_comment, 
                   style: "text-decoration: underline dotted; cursor: help; border-bottom: 1px dotted #999;")
     else
       text
