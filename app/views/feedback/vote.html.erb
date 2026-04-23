@@ -4,9 +4,9 @@
   <div class="flash notice">
     <%
       rating_text = case @existing_feedback
-                    when 'good' then l(:label_good)
-                    when 'okay' then l(:label_okay)
-                    when 'bad' then l(:label_bad)
+                    when 'good', 'Хорошо' then l(:label_good)
+                    when 'okay', 'Нормально' then l(:label_okay)
+                    when 'bad', 'Плохо' then l(:label_bad)
                     else @existing_feedback
                     end
     %>
@@ -15,8 +15,36 @@
       <p><strong><%= l(:field_comment) %>:</strong> <%= @existing_comment %></p>
     <% end %>
   </div>
+  <p>
+    <%= link_to l(:button_change), '#', onclick: "document.getElementById('feedback-form').style.display='block'; this.style.display='none'; return false;", class: 'icon icon-edit' %>
+  </p>
+  <%= form_tag feedback_submit_path(@issue.id, token: params[:token]), method: :post, class: 'feedback-form', id: 'feedback-form', style: 'display:none;' do %>
+    <div class="box">
+      <p>
+        <label><%= l(:label_feedback_rating) %></label>
+        <span class="rating-options">
+          <%
+            current_rating = case @existing_feedback
+                            when 'good', 'Хорошо' then 'good'
+                            when 'okay', 'Нормально' then 'okay'
+                            when 'bad', 'Плохо' then 'bad'
+                            else 'okay'
+                            end
+          %>
+          <label><%= radio_button_tag 'rating', 'good', current_rating == 'good' %> <%= l(:label_good) %></label>
+          <label><%= radio_button_tag 'rating', 'okay', current_rating == 'okay' %> <%= l(:label_okay) %></label>
+          <label><%= radio_button_tag 'rating', 'bad', current_rating == 'bad' %> <%= l(:label_bad) %></label>
+        </span>
+      </p>
+      <p>
+        <%= label_tag :comment, l(:field_comment) %>
+        <%= text_area_tag :comment, @existing_comment || '', rows: 5, style: 'width: 100%; max-width: 600px;' %>
+      </p>
+    </div>
+    <p><%= submit_tag l(:button_submit), class: 'button-positive' %></p>
+  <% end %>
 <% else %>
-  <%= form_tag feedback_submit_path(@issue.id, token: params[:token]), method: :post, class: 'feedback-form' do %>
+  <%= form_tag feedback_submit_path(@issue.id, token: params[:token]), method: :post, class: 'feedback-form', id: 'feedback-form' do %>
     <div class="box">
       <p>
         <label><%= l(:label_feedback_rating) %></label>
