@@ -22,9 +22,18 @@ module RedmineFeedback
                     else rating
                     end
       
-      feedback = Feedback.find_by(issue_id: issue.id)
+      # Получаем комментарий из модели Feedback
+      feedback = nil
+      begin
+        require_dependency 'feedback'
+        feedback = Feedback.find_by(issue_id: issue.id)
+      rescue => e
+        # Игнорируем ошибки загрузки модели
+      end
+      
       comment = feedback&.comment
-      tooltip = comment.present? ? "Комментарий: #{comment}" : ''
+      # Экранируем комментарий для использования в атрибуте title
+      tooltip = comment.present? ? "Комментарий: #{comment.to_s.gsub('"', '&quot;').gsub("\n", ' ')}" : ''
       
       html = <<-HTML
         <div class="feedback-info" style="margin-top: 10px;">

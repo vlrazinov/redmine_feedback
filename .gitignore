@@ -1,25 +1,19 @@
-```
 # Dependencies
-node_modules/
 vendor/bundle/
 
-# Logs
+# Logs and temp files
 *.log
-log/
-
-# Environment variables
-.env
-.env.local
-.env.*
-
-# Coverage
-coverage/
-*.cov
-
-# Temporary files
 *.tmp
 *.swp
-*~
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
 
 # OS generated files
 .DS_Store
@@ -27,7 +21,23 @@ Thumbs.db
 
 # Ruby specific
 *.gem
+*.rbc
+coverage/
+.rspec
 .bundle/
-.ruby-version
-.rubocop.yml
-```
+Gemfile.lock
+
+# Build and cache
+build/
+dist/
+*.o
+*.obj
+__pycache__/
+*.pyc
+target/
+.gradle/
+node_modules/
+.mypy_cache/
+.pytest_cache/
+htmlcov/
+.coverage
