@@ -1,0 +1,36 @@
+<h2><%= l(:label_feedback_title) %></h2>
+
+<% if @existing_feedback.present? %>
+  <div class="flash notice">
+    <%
+      rating_text = case @existing_feedback
+                    when 'good' then l(:label_good)
+                    when 'okay' then l(:label_okay)
+                    when 'bad' then l(:label_bad)
+                    else @existing_feedback
+                    end
+    %>
+    <%= l(:notice_already_voted, rating: rating_text) %>
+    <% if @existing_comment.present? %>
+      <p><strong><%= l(:field_comment) %>:</strong> <%= @existing_comment %></p>
+    <% end %>
+  </div>
+<% else %>
+  <%= form_tag feedback_submit_path(@issue.id, token: params[:token]), method: :post, class: 'feedback-form' do %>
+    <div class="box">
+      <p>
+        <label><%= l(:label_feedback_rating) %></label>
+        <span class="rating-options">
+          <label><%= radio_button_tag 'rating', 'good' %> <%= l(:label_good) %></label>
+          <label><%= radio_button_tag 'rating', 'okay' %> <%= l(:label_okay) %></label>
+          <label><%= radio_button_tag 'rating', 'bad' %> <%= l(:label_bad) %></label>
+        </span>
+      </p>
+      <p>
+        <%= label_tag :comment, l(:field_comment) %>
+        <%= text_area_tag :comment, '', rows: 5, style: 'width: 100%; max-width: 600px;' %>
+      </p>
+    </div>
+    <p><%= submit_tag l(:button_submit), class: 'button-positive' %></p>
+  <% end %>
+<% end %>
