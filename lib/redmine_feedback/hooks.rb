@@ -22,30 +22,26 @@ module RedmineFeedback
                     else rating
                     end
       
-      # Получаем комментарий из модели Feedback
-      feedback = nil
-      begin
-        require_dependency 'feedback'
-        feedback = Feedback.find_by(issue_id: issue.id)
-      rescue => e
-        # Игнорируем ошибки загрузки модели
-      end
-      
+      # Получаем комментарий из модели Feedback (поле vote_comment)
+      feedback = Feedback.find_by(issue_id: issue.id)
       comment = feedback&.vote_comment
+      
       # Формируем tooltip с комментарием
       if comment.present?
         # Очищаем комментарий от переносов строк и экранируем спецсимволы для HTML атрибута
         tooltip_text = comment.to_s.gsub("\n", ' ').gsub("\r", ' ').gsub('"', '&quot;').gsub("'", '&#39;')
         tooltip = "Комментарий: #{tooltip_text}"
         title_attr = "title=\"#{tooltip}\""
+        style_attr = "style=\"cursor: help; text-decoration: underline dotted; border-bottom: 1px dotted #999;\""
       else
         title_attr = ""
+        style_attr = "style=\"cursor: default;\""
       end
       
       html = <<-HTML
         <div class="feedback-info" style="margin-top: 10px;">
           <strong>⭐ Оценка поддержки:</strong>
-          <span class="feedback-rating feedback-#{rating}" style="cursor: help; text-decoration: underline dotted;" #{title_attr}>
+          <span class="feedback-rating feedback-#{rating}" #{style_attr} #{title_attr}>
             #{rating_text}
           </span>
         </div>
