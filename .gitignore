@@ -1,8 +1,12 @@
+```
 # Dependencies
 vendor/bundle/
 
-# Logs and temp files
+# Logs
 *.log
+log/*.log
+
+# Temp files
 *.tmp
 *.swp
 
@@ -11,33 +15,45 @@ vendor/bundle/
 .env.local
 *.env.*
 
-# Editors
-.vscode/
-.idea/
+# Coverage
+coverage/
+*.cover
+*.gcov
+*.lcov
 
-# OS generated files
+# Build artifacts
+*.o
+*.obj
+*.a
+*.so
+*.dll
+*.exe
+*.out
+
+# Compression
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+
+# System files
 .DS_Store
 Thumbs.db
 
-# Ruby specific
-*.gem
-*.rbc
-coverage/
-.rspec
-.bundle/
-Gemfile.lock
+# Editors
+.vscode/
+.idea/
+*.swo
 
-# Build and cache
-build/
-dist/
-*.o
-*.obj
-__pycache__/
-*.pyc
-target/
-.gradle/
-node_modules/
-.mypy_cache/
-.pytest_cache/
-htmlcov/
-.coverage
+# Database
+db/schema.rb
+db/structure.sql
+
+# Original rules preserved
+*.log
+```
