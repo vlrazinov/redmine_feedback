@@ -20,7 +20,7 @@ module FeedbackHelper
     
     return '-' unless rating_value.present?
 
-    # Получаем комментарий из таблицы feedbacks
+    # Получаем комментарий из таблицы feedbacks (поле vote_comment)
     feedback = Feedback.find_by(issue_id: issue.id)
     comment = feedback&.vote_comment
 

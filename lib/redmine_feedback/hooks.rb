@@ -31,7 +31,7 @@ module RedmineFeedback
         # Игнорируем ошибки загрузки модели
       end
       
-      comment = feedback&.comment
+      comment = feedback&.vote_comment
       # Формируем tooltip с комментарием
       if comment.present?
         # Очищаем комментарий от переносов строк и экранируем спецсимволы для HTML атрибута
