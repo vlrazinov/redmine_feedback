@@ -4,6 +4,50 @@ module RedmineFeedback
       stylesheet_link_tag('feedback', :plugin => 'redmine_feedback')
     end
     
+    # Этот хук вызывается при отображении значений кастомных полей
+    # Мы перехватываем его, чтобы добавить tooltip к нашему полю оценки
+    def view_custom_fields_values_issue(context={})
+      issue = context[:issue]
+      return '' unless issue
+      
+      feedback_field_id = Setting.plugin_redmine_feedback['feedback_custom_field_id']
+      return '' unless feedback_field_id
+      
+      # Находим значение нашего поля
+      custom_value = issue.custom_values.detect { |v| v.custom_field_id.to_s == feedback_field_id.to_s }
+      return '' unless custom_value.present?
+      
+      rating = custom_value.value
+      return '' unless rating.present?
+      
+      rating_text = case rating
+                    when 'good', 'Хорошо' then I18n.t(:label_good)
+                    when 'okay', 'Нормально' then I18n.t(:label_okay)
+                    when 'bad', 'Плохо' then I18n.t(:label_bad)
+                    else rating.to_s
+                    end
+      
+      # Получаем комментарий из модели Feedback (поле vote_comment)
+      feedback = Feedback.find_by(issue_id: issue.id)
+      comment = feedback&.vote_comment
+      
+      # Формируем tooltip с комментарием
+      if comment.present?
+        # Очищаем комментарий от переносов строк и экранируем спецсимволы для HTML атрибута
+        tooltip_text = comment.to_s.gsub("\n", ' ').gsub("\r", ' ').gsub('"', '&quot;').gsub("'", '&#39;')
+        tooltip = "#{I18n.t(:label_comment)}: #{tooltip_text}"
+        title_attr = "title=\"#{tooltip}\""
+        style_attr = "style=\"cursor: help; text-decoration: underline dotted; border-bottom: 1px dotted #999;\""
+        
+        # Возвращаем HTML с подсказкой
+        html = "<span class=\"feedback-rating feedback-#{rating}\" #{style_attr} #{title_attr}>#{rating_text}</span>"
+        return html.html_safe
+      end
+      
+      # Если комментария нет, возвращаем nil, чтобы Redmine отобразил значение как обычно
+      nil
+    end
+    
     def view_issues_show_details_bottom(context = {})
       issue = context[:issue]
       return '' unless issue
@@ -16,10 +60,10 @@ module RedmineFeedback
       return '' unless rating.present?
       
       rating_text = case rating
-                    when 'good' then 'Хорошо'
-                    when 'okay' then 'Нормально'
-                    when 'bad' then 'Плохо'
-                    else rating
+                    when 'good', 'Хорошо' then I18n.t(:label_good)
+                    when 'okay', 'Нормально' then I18n.t(:label_okay)
+                    when 'bad', 'Плохо' then I18n.t(:label_bad)
+                    else rating.to_s
                     end
       
       # Получаем комментарий из модели Feedback (поле vote_comment)
@@ -30,12 +74,12 @@ module RedmineFeedback
       if comment.present?
         # Очищаем комментарий от переносов строк и экранируем спецсимволы для HTML атрибута
         tooltip_text = comment.to_s.gsub("\n", ' ').gsub("\r", ' ').gsub('"', '&quot;').gsub("'", '&#39;')
-        tooltip = "Комментарий: #{tooltip_text}"
+        tooltip = "#{I18n.t(:label_comment)}: #{tooltip_text}"
         title_attr = "title=\"#{tooltip}\""
         style_attr = "style=\"cursor: help; text-decoration: underline dotted; border-bottom: 1px dotted #999;\""
       else
         title_attr = ""
-        style_attr = "style=\"cursor: default;\""
+        style_attr = ""
       end
       
       html = <<-HTML
