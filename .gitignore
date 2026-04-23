@@ -1,59 +1,58 @@
 ```
-# Dependencies
-vendor/bundle/
-
-# Logs
-*.log
-log/*.log
-
-# Temp files
-*.tmp
-*.swp
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Coverage
-coverage/
-*.cover
-*.gcov
-*.lcov
-
-# Build artifacts
+# Compiled and build artifacts
+*.pyc
+__pycache__/
 *.o
 *.obj
-*.a
+*.class
 *.so
 *.dll
 *.exe
 *.out
 
-# Compression
-*.zip
-*.gz
-*.tar
-*.tgz
-*.bz2
-*.xz
-*.7z
-*.rar
-*.zst
+# Dependencies
+venv/
+.venv/
+node_modules/
+.bundle/
+vendor/bundle/
 
-# System files
-.DS_Store
-Thumbs.db
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.*
 
 # Editors
 .vscode/
 .idea/
+*.swp
 *.swo
 
-# Database
-db/schema.rb
-db/structure.sql
+# Build and distribution
+dist/
+build/
+target/
+*.gem
+*.war
+*.jar
 
-# Original rules preserved
-*.log
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Cache
+.mypy_cache/
+.pytest_cache/
+.gradle/
 ```
