@@ -32,10 +32,10 @@ venv/
 .DS_Store
 Thumbs.db
 
-# Coverage and testing
-.coverage
+# Coverage reports
 coverage/
 htmlcov/
+.coverage
 
 # Build directories
 dist/
@@ -43,11 +43,11 @@ build/
 target/
 .gradle/
 
-# Python specific
+# Python cache
 .mypy_cache/
 .pytest_cache/
 
-# Archives
+# Compressed files
 *.zip
 *.gz
 *.tar
@@ -66,4 +66,8 @@ target/
 *.Z
 *.lz
 *.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
 ```
