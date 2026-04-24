@@ -1,1 +1,32 @@
-Nothing should be ignored based on the provided file changes. The only modified file is `lib/redmine_feedback/hooks.rb`, which is a source code file and should not be ignored.
+# Dependencies
+vendor/bundle/
+.bundle/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Ruby specific
+*.gem
+*.rbc
+coverage/
+.rspec
+.bundle/
+junit/
+
+# Redmine specific
+files/
+public/plugin_assets/
