@@ -30,12 +30,64 @@ end
 $redmine_feedback_initialized = false
 
 # Инициализируем поля после подготовки окружения
-# Файлы загружаются автоматически благодаря Zeitwerk
 Rails.configuration.to_prepare do
   unless $redmine_feedback_initialized
     # Создаём поля только один раз при загрузке приложения
-    RedmineFeedback::CustomFieldsManager.ensure_custom_fields_exist!
-    $redmine_feedback_initialized = true
+    begin
+      # Проверяем и создаём поле для оценки
+      field_id = Setting.plugin_redmine_feedback['feedback_custom_field_id']
+      
+      unless field_id.present? && IssueCustomField.find_by(id: field_id)&.name == 'Оценка поддержки'
+        existing_field = IssueCustomField.find_by(name: 'Оценка поддержки')
+        if existing_field
+          Setting.plugin_redmine_feedback = Setting.plugin_redmine_feedback.merge(
+            'feedback_custom_field_id' => existing_field.id.to_s
+          )
+        else
+          field = IssueCustomField.create!(
+            name: 'Оценка поддержки',
+            field_format: 'string',
+            is_for_all: true,
+            is_filter: true,
+            editable: true,
+            visible: true,
+            trackers: Tracker.all
+          )
+          Setting.plugin_redmine_feedback = Setting.plugin_redmine_feedback.merge(
+            'feedback_custom_field_id' => field.id.to_s
+          )
+        end
+      end
+      
+      # Проверяем и создаём поле для комментария
+      comment_field_id = Setting.plugin_redmine_feedback['feedback_comment_custom_field_id']
+      
+      unless comment_field_id.present? && IssueCustomField.find_by(id: comment_field_id)&.name == 'Комментарий к оценке поддержки'
+        existing_comment_field = IssueCustomField.find_by(name: 'Комментарий к оценке поддержки')
+        if existing_comment_field
+          Setting.plugin_redmine_feedback = Setting.plugin_redmine_feedback.merge(
+            'feedback_comment_custom_field_id' => existing_comment_field.id.to_s
+          )
+        else
+          comment_field = IssueCustomField.create!(
+            name: 'Комментарий к оценке поддержки',
+            field_format: 'text',
+            is_for_all: true,
+            is_filter: true,
+            editable: true,
+            visible: true,
+            trackers: Tracker.all
+          )
+          Setting.plugin_redmine_feedback = Setting.plugin_redmine_feedback.merge(
+            'feedback_comment_custom_field_id' => comment_field.id.to_s
+          )
+        end
+      end
+      
+      $redmine_feedback_initialized = true
+    rescue => e
+      Rails.logger.error "[Redmine Feedback] Error initializing custom fields: #{e.message}"
+    end
   end
 end
 
