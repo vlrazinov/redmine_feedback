@@ -2,61 +2,25 @@
 # Compiled and build artifacts
 *.pyc
 __pycache__/
-*.o
-*.obj
-*.class
-*.exe
-*.dll
-*.so
-*.a
-*.out
 
 # Dependencies
-node_modules/
-venv/
-.venv/
-.bundle/
 vendor/bundle/
+.bundle/
 
 # Logs and temp files
 *.log
 *.tmp
-*.swp
-*.swo
 
 # Environment
 .env
 .env.local
-.env.*
+*.env.*
 
 # Editors
-.vscode/
 .idea/
-*.swp
-*.swo
+.vscode/
 
 # OS generated files
 .DS_Store
 Thumbs.db
-
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
-
-# Build directories (Ruby/Rails specific)
-pkg/
-*.gem
-*.rbc
-coverage/
-*.dSYM/
-*.dump
-.rake_tasks
-.redcar
-
-# Redmine specific
-files/
-log/
-tmp/
-public/plugin_assets/
 ```
