@@ -40,19 +40,13 @@ module RedmineFeedback
       feedback = Feedback.find_by(issue_id: issue.id)
       comment ||= feedback&.vote_comment if feedback
       
-      # Формируем tooltip с комментарием
-      if comment.present?
-        # Очищаем комментарий от переносов строк и экранируем спецсимволы для HTML атрибута
-        tooltip_text = comment.to_s.gsub("\n", ' ').gsub("\r", ' ').gsub('"', '&quot;').gsub("'", '&#39;')
-        tooltip = "#{I18n.t(:label_comment)}: #{tooltip_text}"
-        
-        # Возвращаем HTML с подсказкой - оборачиваем в span с title
-        html = "<span title=\"#{tooltip}\" style=\"cursor: help; text-decoration: underline dotted;\">#{rating_text}</span>"
-        return html.html_safe
-      end
+      # Формируем tooltip с комментарием - всегда показываем, даже если комментария нет
+      tooltip_text = comment.present? ? comment.to_s.gsub("\n", ' ').gsub("\r", ' ').gsub('"', '&quot;').gsub("'", '&#39;') : ''
+      tooltip = "#{I18n.t(:label_comment)}: #{tooltip_text}"
       
-      # Если комментария нет, всё равно возвращаем значение, но без tooltip
-      rating_text.html_safe
+      # Возвращаем HTML с подсказкой - оборачиваем в span с title
+      html = "<span class=\"feedback-rating-tooltip\" title=\"#{tooltip}\" style=\"cursor: help; text-decoration: underline dotted;\" data-comment=\"#{tooltip_text}\">#{rating_text}</span>"
+      return html.html_safe
     end
     
     def view_issues_show_details_bottom(context = {})
