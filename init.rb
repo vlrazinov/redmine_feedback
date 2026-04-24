@@ -1,5 +1,8 @@
 require 'redmine'
 
+# Загружаем менеджер пользовательских полей
+require_dependency 'redmine_feedback/custom_fields_manager'
+
 # Регистрируем макрос
 Redmine::WikiFormatting::Macros.register do
   desc "Inserts a link to the feedback form. Usage: {{feedback_link}}"
@@ -40,6 +43,11 @@ Redmine::Plugin.register :redmine_feedback do
     'feedback_comment_custom_field_id' => nil,
     'feedback_link_text' => 'Оценить поддержку'
   }, :partial => 'settings/feedback_settings'
+  
+  # Хук после загрузки плагина - создаём и привязываем поля автоматически
+  Redmine::Plugin.after_initialize do
+    RedmineFeedback::CustomFieldsManager.ensure_custom_fields_exist!
+  end
 end
 
 # Загружаем хук после регистрации плагина
