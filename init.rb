@@ -37,6 +37,7 @@ Redmine::Plugin.register :redmine_feedback do
 
   settings :default => { 
     'feedback_custom_field_id' => nil,
+    'feedback_comment_custom_field_id' => nil,
     'feedback_link_text' => 'Оценить поддержку'
   }, :partial => 'settings/feedback_settings'
 end

@@ -13,6 +13,7 @@ ru:
   notice_already_voted: "Вы уже оценили эту задачу. Ваша оценка: %{rating}"
   label_comment: "Комментарий"
   label_feedback_custom_field: "Поле для оценки"
+  label_feedback_comment_custom_field: "Поле для комментария"
   text_no_feedback_field: "Поле не выбрано"
   text_feedback_link_text_info: "Текст для макроса {{feedback_link}}"
   label_available_macros: "Доступные макросы"

@@ -15,6 +15,7 @@ en:
   notice_already_voted: "You have already rated this issue. Your rating: %{rating}."
   label_comment: "Comment"
   label_feedback_custom_field: "Feedback custom field"
+  label_feedback_comment_custom_field: "Feedback comment custom field"
   text_no_feedback_field: "Feedback field not created"
   label_create_feedback_field: "Create field"
   text_feedback_link_text_info: "Link text for {{feedback_link}} macro"

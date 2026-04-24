@@ -25,6 +25,12 @@ class FeedbackController < ApplicationController
     @feedback = Feedback.find_by(issue_id: @issue.id)
     @existing_comment = @feedback&.vote_comment
     @existing_vote = @feedback&.vote
+
+    # Также получаем комментарий из custom field
+    comment_custom_field_id = Setting.plugin_redmine_feedback['feedback_comment_custom_field_id']
+    if comment_custom_field_id.present?
+      @existing_comment ||= @issue.custom_value_for(comment_custom_field_id)&.value
+    end
   end
 
   def submit
@@ -62,6 +68,23 @@ class FeedbackController < ApplicationController
       else
         custom_value.value = rating_value
         custom_value.save
+      end
+    end
+
+    # Сохраняем комментарий в custom field
+    comment_custom_field_id = Setting.plugin_redmine_feedback['feedback_comment_custom_field_id']
+    if comment_custom_field_id.present? && comment.present?
+      comment_custom_value = @issue.custom_values.detect { |v| v.custom_field_id == comment_custom_field_id.to_i }
+      if comment_custom_value.nil?
+        comment_custom_value = CustomValue.new(
+          customized: @issue,
+          custom_field_id: comment_custom_field_id,
+          value: comment
+        )
+        comment_custom_value.save
+      else
+        comment_custom_value.value = comment
+        comment_custom_value.save
       end
     end
 

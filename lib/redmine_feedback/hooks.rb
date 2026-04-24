@@ -29,9 +29,16 @@ module RedmineFeedback
                     else rating.to_s
                     end
       
-      # Получаем комментарий из модели Feedback (поле vote_comment)
+      # Получаем комментарий из custom field
+      comment_custom_field_id = Setting.plugin_redmine_feedback['feedback_comment_custom_field_id']
+      comment = nil
+      if comment_custom_field_id.present?
+        comment_value = issue.custom_values.detect { |v| v.custom_field_id.to_s == comment_custom_field_id.to_s }
+        comment = comment_value&.value
+      end
+      # Fallback to feedback model
       feedback = Feedback.find_by(issue_id: issue.id)
-      comment = feedback&.vote_comment
+      comment ||= feedback&.vote_comment if feedback
       
       # Формируем tooltip с комментарием
       if comment.present?
@@ -66,9 +73,16 @@ module RedmineFeedback
                     else rating.to_s
                     end
       
-      # Получаем комментарий из модели Feedback (поле vote_comment)
+      # Получаем комментарий из custom field
+      comment_custom_field_id = Setting.plugin_redmine_feedback['feedback_comment_custom_field_id']
+      comment = nil
+      if comment_custom_field_id.present?
+        comment_value = issue.custom_values.detect { |v| v.custom_field_id.to_s == comment_custom_field_id.to_s }
+        comment = comment_value&.value
+      end
+      # Fallback to feedback model
       feedback = Feedback.find_by(issue_id: issue.id)
-      comment = feedback&.vote_comment
+      comment ||= feedback&.vote_comment if feedback
       
       # Формируем tooltip с комментарием
       if comment.present?

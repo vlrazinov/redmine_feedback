@@ -15,6 +15,14 @@
       <%= select_tag 'settings[feedback_custom_field_id]', options_for_select(fields, field_id), include_blank: true %>
       <em>Выберите поле для хранения оценки</em>
     </p>
+    
+    <p>
+      <label><%= l(:label_feedback_comment_custom_field) %></label>
+      <% comment_field_id = @settings['feedback_comment_custom_field_id'] %>
+      <% comment_fields = IssueCustomField.where(field_format: 'text').map { |f| [f.name, f.id] } %>
+      <%= select_tag 'settings[feedback_comment_custom_field_id]', options_for_select(comment_fields, comment_field_id), include_blank: true %>
+      <em>Выберите поле для хранения комментария</em>
+    </p>
   </div>
   
   <fieldset class="box">
