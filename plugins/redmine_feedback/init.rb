@@ -29,14 +29,10 @@ end
 # Флаг для однократной инициализации
 $redmine_feedback_initialized = false
 
-# Загружаем файлы плагина и инициализируем поля после подготовки окружения
+# Инициализируем поля после подготовки окружения
+# Файлы загружаются автоматически благодаря Zeitwerk
 Rails.configuration.to_prepare do
   unless $redmine_feedback_initialized
-    plugin_root = File.join(File.dirname(__FILE__))
-    require File.join(plugin_root, 'lib', 'redmine_feedback', 'custom_fields_manager')
-    require File.join(plugin_root, 'lib', 'redmine_feedback', 'hooks')
-    require File.join(plugin_root, 'lib', 'redmine_feedback', 'issue_patch')
-
     # Создаём поля только один раз при загрузке приложения
     RedmineFeedback::CustomFieldsManager.ensure_custom_fields_exist!
     $redmine_feedback_initialized = true
