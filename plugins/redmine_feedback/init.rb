@@ -44,9 +44,10 @@ end
 
 # Загружаем файлы плагина после подготовки окружения
 Rails.configuration.to_prepare do
-  require_dependency 'redmine_feedback/custom_fields_manager'
-  require_dependency 'redmine_feedback/hooks'
-  require_dependency 'redmine_feedback/issue_patch'
+  plugin_root = File.join(File.dirname(__FILE__))
+  require File.join(plugin_root, 'lib', 'redmine_feedback', 'custom_fields_manager')
+  require File.join(plugin_root, 'lib', 'redmine_feedback', 'hooks')
+  require File.join(plugin_root, 'lib', 'redmine_feedback', 'issue_patch')
   
   # Создаём и привязываем поля автоматически после загрузки всех моделей
   RedmineFeedback::CustomFieldsManager.ensure_custom_fields_exist!
