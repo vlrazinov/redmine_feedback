@@ -26,6 +26,15 @@ Redmine::WikiFormatting::Macros.register do
   end
 end
 
+# Загружаем файлы плагина после подготовки окружения
+Rails.configuration.to_prepare do
+  plugin_root = File.join(File.dirname(__FILE__))
+  require File.join(plugin_root, 'lib', 'redmine_feedback', 'custom_fields_manager') unless defined?(RedmineFeedback::CustomFieldsManager)
+  require File.join(plugin_root, 'lib', 'redmine_feedback', 'hooks') unless defined?(RedmineFeedback::Hooks)
+  require File.join(plugin_root, 'lib', 'redmine_feedback', 'issue_patch') unless defined?(RedmineFeedback::IssuePatch)
+end
+
+# Создаём поля только один раз при активации плагина
 Redmine::Plugin.register :redmine_feedback do
   name 'Redmine Feedback plugin'
   author 'Vladislav Razinov'
@@ -40,15 +49,9 @@ Redmine::Plugin.register :redmine_feedback do
     'feedback_comment_custom_field_id' => nil,
     'feedback_link_text' => 'Оценить поддержку'
   }, :partial => 'settings/feedback_settings'
-end
-
-# Загружаем файлы плагина после подготовки окружения
-Rails.configuration.to_prepare do
-  plugin_root = File.join(File.dirname(__FILE__))
-  require File.join(plugin_root, 'lib', 'redmine_feedback', 'custom_fields_manager')
-  require File.join(plugin_root, 'lib', 'redmine_feedback', 'hooks')
-  require File.join(plugin_root, 'lib', 'redmine_feedback', 'issue_patch')
   
-  # Создаём и привязываем поля автоматически после загрузки всех моделей
-  RedmineFeedback::CustomFieldsManager.ensure_custom_fields_exist!
+  # Инициализация полей после регистрации плагина
+  if defined?(RedmineFeedback::CustomFieldsManager)
+    RedmineFeedback::CustomFieldsManager.ensure_custom_fields_exist!
+  end
 end
